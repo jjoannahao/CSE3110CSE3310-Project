@@ -30,7 +30,7 @@ def cleanRawData(allData):
 
 def sortIDs(allData):
     """
-    sort all superhero data lexicographically by superhero ID using selection sort
+    sort all superhero data lexicographically by superhero ID using iterative selection sort
     :param allData: unsorted list - string
     :return: None
     """
@@ -55,9 +55,9 @@ def searchID(ID):
 
     while (START_IDX <= END_IDX):  # normal stopping point for binary search
         MIDPOINT_IDX = (START_IDX + END_IDX) // 2
-        if allSuperheroData[MIDPOINT_IDX] == ID:
+        if allSuperheroData[MIDPOINT_IDX][0] == ID:
             return MIDPOINT_IDX
-        elif allSuperheroData[MIDPOINT_IDX] < ID:
+        elif allSuperheroData[MIDPOINT_IDX][0] < ID:
             START_IDX = MIDPOINT_IDX + 1
         else:
             END_IDX = MIDPOINT_IDX - 1
@@ -81,30 +81,62 @@ def menu() -> str:
     """
     print("Welcome to the Superhero Search and Sort!")
     superheroID = input("What is the Superhero ID? ")
-    if (superheroID[0].upper() in {"D", "M"}) and (superheroID[1:].isdigit() and int(superheroID[1:]) < 1000):
+    superheroID = reformatID(superheroID)  # reformat some IDs
+    if checkID(superheroID):
         return superheroID
     else:
-        print("Entry is invalid!")
+        print("Entry is invalid!\n")
         return menu()
 
 
+def checkID(ID):
+    """
+    check validity of superhero ID inputted
+    :param ID: string
+    :return: bool
+    """
+    global allSuperheroIDs
+    valid = True
+    if ID not in allSuperheroIDs:  # check ID existence in data
+        valid = False
+    return valid
+
+
+def reformatID(ID):
+    """
+    make input ID format consistent w/ data format
+    :param ID: string
+    :return: string
+    """
+    ID_numbers = ID[1:]
+    if ID_numbers.isdigit() and int(ID_numbers) < 1000:
+        if len(ID_numbers) < 3:
+            ID_numbers = list(ID_numbers)
+            for i in range(3 - len(ID_numbers)):
+                ID_numbers.insert(0, "0")
+            ID_numbers = "".join(ID_numbers)
+    newID = ID[0].upper() + ID_numbers
+    # print(f"    new ID: {newID}") # checking purposes
+    return newID  # either 3 numbers (OK) or more than 4 numbers --> won't exist
+
+
+def compileIDs(allData):
+    """
+    combine all superhero IDs into 1 list
+    :param allData: 2D list - strings
+    :return: list - string
+    """
+    heroIDs = []
+    for i in range(len(allData)):
+        heroIDs.append(allData[i][0])
+    return heroIDs
+
+
 if __name__ == "__main__":
-    """
-    rawArr, headers = getRawData('comicBookCharData_mixed.csv')
-    # rawArr is a 2D arrays holding all the Superhero data
-    # headers is a variable that holds the List of all the column headers.
-
-    ##### checking
-    print(headers)
-    # 708 characters, 11 characteristics associated w/ each
-    cleanRawData(rawArr)
-    print(rawArr[:10])
-    sortIDs(rawArr)
-    print(rawArr[:10])
-    """
-
     # ----- MAIN PROGRAM CODE ----- #
     allSuperheroData, headers = getRawData('comicBookCharData_mixed.csv')
+    print(headers)
+    allSuperheroIDs = compileIDs(allSuperheroData)
     playAgain = True
 
     while playAgain:
@@ -119,6 +151,7 @@ if __name__ == "__main__":
             continue
         else:
             SUPERHERO_INFO = retrieveSuperheroInfo(SUPERHERO_IDX)
+
             # --- output --- #
             print(f"""
 Superhero ID: {SUPERHERO_INFO[0]}
@@ -129,11 +162,7 @@ Eye: {SUPERHERO_INFO[4]}
 Hair: {SUPERHERO_INFO[5]}
 Alive: {SUPERHERO_INFO[6]}
 Appearances: {SUPERHERO_INFO[7]}
-First-Appearance:
-Year:
-Brand: 
+First-Appearance: {SUPERHERO_INFO[8]}
+Year: {SUPERHERO_INFO[9]}
+Brand: {SUPERHERO_INFO[10]}
             """)
-
-
-
-
