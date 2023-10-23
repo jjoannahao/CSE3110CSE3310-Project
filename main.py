@@ -28,22 +28,56 @@ def cleanRawData(allData):
                 allData[i][j] = "Not available"
 
 
-def sortIDs(allData):
+def sortIDs(LIST, FIRST_IDX, LAST_IDX):
     """
-    sort all superhero data lexicographically by superhero ID using iterative selection sort
-    :param allData: unsorted list - string
+    quicksort algo
+    :param LIST: 2D list - strings
+    :param FIRST_IDX: int
+    :param LAST_IDX: int
     :return: None
     """
-    for i in range(len(allData) - 1):  # stop at 2nd last val  # i = idx of value to be sorted/placed
-        MIN_IDX = i
-        for j in range(i + 1, len(allData)):  # all elems in unsorted section
-            if allData[j][0] < allData[MIN_IDX][0]:
-                MIN_IDX = j
-        if allData[MIN_IDX][0] < allData[i][0]:
-            allData[i], allData[MIN_IDX] = allData[MIN_IDX], allData[i]
+    if FIRST_IDX < LAST_IDX:
+        PIVOT_VALUE = LIST[FIRST_IDX][0]  # select 1st num as pivot
+
+        LEFT_IDX = FIRST_IDX + 1
+        RIGHT_IDX = LAST_IDX
+
+        DONE = False
+        while not DONE:
+            while LEFT_IDX <= RIGHT_IDX and LIST[LEFT_IDX][0] <= PIVOT_VALUE:  # left hand bigger? hands crossed?
+                LEFT_IDX += 1
+            while RIGHT_IDX >= LEFT_IDX and LIST[RIGHT_IDX][0] >= PIVOT_VALUE:
+                RIGHT_IDX -= 1
+
+            if RIGHT_IDX < LEFT_IDX:  # if hands cross
+                DONE = True  # found pivot spot
+            else:
+                LIST[LEFT_IDX], LIST[RIGHT_IDX] = LIST[RIGHT_IDX], LIST[LEFT_IDX]
+
+        LIST[FIRST_IDX], LIST[RIGHT_IDX] = LIST[RIGHT_IDX], LIST[FIRST_IDX]
+
+        sortIDs(LIST, FIRST_IDX, RIGHT_IDX - 1)  # sort left section
+        sortIDs(LIST, RIGHT_IDX + 1, LAST_IDX)  # sort right section
 
 
-def searchID(ID):
+def searchID(INDEX, VALUE):
+    """
+    searches for a value w/in a LIST using recursive linear search
+    :param INDEX: int
+    :param VALUE: string
+    :return: int
+    """
+    global allSuperheroData
+    if INDEX > len(allSuperheroData)-1:
+        return -1
+    elif allSuperheroData[INDEX] == VALUE:
+        return INDEX
+    else:
+        return searchID(INDEX + 1, VALUE)
+
+
+
+def iterativeSearchID(ID):
     """
     search for index of superhero info based on ID using ITERATIVE binary search
     :param ID: str
@@ -135,7 +169,7 @@ def compileIDs(allData):
 if __name__ == "__main__":
     # ----- MAIN PROGRAM CODE ----- #
     allSuperheroData, headers = getRawData('comicBookCharData_mixed.csv')
-    print(headers)
+    # print(headers)
     allSuperheroIDs = compileIDs(allSuperheroData)
     playAgain = True
 
@@ -145,8 +179,8 @@ if __name__ == "__main__":
 
         # --- processing --- #
         cleanRawData(allSuperheroData)
-        sortIDs(allSuperheroData)
-        SUPERHERO_IDX = searchID(superheroID)
+        sortIDs(allSuperheroData, 0, len(allSuperheroIDs)-1)
+        SUPERHERO_IDX = searchID(0, superheroID)
         if SUPERHERO_IDX == -1:
             continue
         else:
