@@ -5,6 +5,53 @@ date: 2023-10-12
 """
 
 
+### INPUT FUNCTIONS ###
+def menu() -> int:
+    """
+    print start message and get superhero ID to retrieve
+    :return: int
+    """
+    print("Welcome to the Superhero Search and Sort!")
+    choice = input("""
+Please choose how you would like to search superheros:
+1. Superhero ID
+2. Superhero Name
+> """)
+    if choice.isdigit() and 1 <= int(choice) <= 2:
+        return int(choice)
+    else:
+        print(">>> Please enter a number between 1 and 2!")
+        return menu()
+
+
+def getSuperheroID():
+    """
+    Get superhero ID to search from user
+    :return:
+    """
+    superheroID = input("What is the Superhero ID? ")
+    superheroID = reformatID(superheroID)  # reformat some IDs
+    if checkID(superheroID):
+        return superheroID
+    else:
+        print(">>> Entry is invalid!\n")
+        return menu()
+
+
+def getSuperheroName():
+    """
+    get superhero name to search from user
+    :return:
+    """
+    superheroName = input("What is the Superhero Name? ")
+    if checkName(superheroName):
+        return superheroName.strip()
+    else:
+        print(">>> Entry invalid!")
+        return getSuperheroName()
+
+
+### PROCESSING FUNCTIONS ###
 def getRawData(fileName):
     import csv
     tempLi = []
@@ -100,21 +147,6 @@ def searchName(NAME):
     return -1
 
 
-def partialSearchName(SEARCHED_NAME):
-    """
-    search for partial matches to desired superhero name
-    :param SEARCHED_NAME: str
-    :return: 2D list - list of tuples (int, str)
-    """
-    global allSuperheroData
-    idx = 0
-    possibleMatches = []
-    for i in range(len(allSuperheroData)):
-        if SEARCHED_NAME in allSuperheroData[idx][1]:
-            possibleMatches.append((i, allSuperheroData[idx][1]))
-    return possibleMatches
-
-
 def retrieveSuperheroInfo(index):
     """
     retrieve relevant superhero details using index corresponding to superhero ID
@@ -123,51 +155,6 @@ def retrieveSuperheroInfo(index):
     """
     global allSuperheroData
     return allSuperheroData[index]
-
-
-def menu() -> int:
-    """
-    print start message and get superhero ID to retrieve
-    :return: int
-    """
-    print("Welcome to the Superhero Search and Sort!")
-    choice = input("""
-Please choose how you would like to search superheros:
-1. Superhero ID
-2. Superhero Name
-> """)
-    if choice.isdigit() and 1 <= int(choice) <= 2:
-        return int(choice)
-    else:
-        print(">>> Please enter a number between 1 and 2!")
-        return menu()
-
-
-def getSuperheroID():
-    """
-    Get superhero ID to search from user
-    :return:
-    """
-    superheroID = input("What is the Superhero ID? ")
-    superheroID = reformatID(superheroID)  # reformat some IDs
-    if checkID(superheroID):
-        return superheroID
-    else:
-        print(">>> Entry is invalid!\n")
-        return menu()
-
-
-def getSuperheroName():
-    """
-    get superhero name to search from user
-    :return:
-    """
-    superheroName = input("What is the Superhero Name? ")
-    if checkName(superheroName):
-        return superheroName.strip()
-    else:
-        print(">>> Entry invalid!")
-        return getSuperheroName()
 
 
 def checkID(ID):
