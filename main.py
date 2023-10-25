@@ -87,10 +87,6 @@ def searchName(NAME):
     """
     global allSuperheroData
     START_IDX = 0
-    if allSuperheroData[0]
-
-
-    """
     END_IDX = len(allSuperheroData) - 1
 
     while (START_IDX <= END_IDX):  # normal stopping point for binary search
@@ -102,7 +98,21 @@ def searchName(NAME):
         else:
             END_IDX = MIDPOINT_IDX - 1
     return -1
+
+
+def partialSearchName(SEARCHED_NAME):
     """
+    search for partial matches to desired superhero name
+    :param SEARCHED_NAME: str
+    :return: 2D list - list of tuples (int, str)
+    """
+    global allSuperheroData
+    idx = 0
+    possibleMatches = []
+    for i in range(len(allSuperheroData)):
+        if SEARCHED_NAME in allSuperheroData[idx][1]:
+            possibleMatches.append((i, allSuperheroData[idx][1]))
+    return possibleMatches
 
 
 def retrieveSuperheroInfo(index):
@@ -129,7 +139,7 @@ Please choose how you would like to search superheros:
     if choice.isdigit() and 1 <= int(choice) <= 2:
         return int(choice)
     else:
-        print("Please enter a number between 1 and 2!")
+        print(">>> Please enter a number between 1 and 2!")
         return menu()
 
 
@@ -143,7 +153,7 @@ def getSuperheroID():
     if checkID(superheroID):
         return superheroID
     else:
-        print("Entry is invalid!\n")
+        print(">>> Entry is invalid!\n")
         return menu()
 
 
@@ -156,7 +166,7 @@ def getSuperheroName():
     if checkName(superheroName):
         return superheroName.strip()
     else:
-        print("Entry invalid!")
+        print(">>> Entry invalid!")
         return getSuperheroName()
 
 
@@ -227,21 +237,21 @@ if __name__ == "__main__":
 
     while playAgain:
         # --- input --- #
-        choice = menu()
-        if choice == 1:
-            superheroID = getSuperheroID()
+        CHOICE = menu()
+        if CHOICE == 1:
+            SUPERHERO_ID = getSuperheroID()
         else:
-            superheroName = getSuperheroName()
+            SUPERHERO_NAME = getSuperheroName()
 
         # --- processing --- #
         cleanRawData(allSuperheroData)
 
-        if choice == 1:  # user searching by hero ID
+        if CHOICE == 1:  # user searching by hero ID
             sortIDs(allSuperheroData)
-            SUPERHERO_IDX = searchID(superheroID)
+            SUPERHERO_IDX = searchID(SUPERHERO_ID)
         else:  # user searching by hero name
             sortNames(allSuperheroData)
-            SUPERHERO_IDX = searchName(superheroName)
+            SUPERHERO_IDX = searchName(SUPERHERO_NAME)
 
         if SUPERHERO_IDX == -1:  # if superhero doesn't exist
             continue

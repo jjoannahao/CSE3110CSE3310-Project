@@ -13,4 +13,4 @@ def partial(lst, query):
 
 
 # Example 1:
-print(partial(['hello', 'world', 'python'], 'pyth'))
+print(partial(['hello', 'world', 'python', 'pyth'], 'py'))
