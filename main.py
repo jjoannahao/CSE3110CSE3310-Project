@@ -87,6 +87,10 @@ def searchName(NAME):
     """
     global allSuperheroData
     START_IDX = 0
+    if allSuperheroData[0]
+
+
+    """
     END_IDX = len(allSuperheroData) - 1
 
     while (START_IDX <= END_IDX):  # normal stopping point for binary search
@@ -98,6 +102,7 @@ def searchName(NAME):
         else:
             END_IDX = MIDPOINT_IDX - 1
     return -1
+    """
 
 
 def retrieveSuperheroInfo(index):
