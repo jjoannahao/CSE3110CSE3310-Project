@@ -51,6 +51,20 @@ def getSuperheroName():
         return getSuperheroName()
 
 
+def rerun():
+    """
+    determine if user wants to continue running the program
+    :return: bool
+    """
+    CHOICE = input("""
+Would you like to continue playing? Press 'Y' to continue or anything else to exit.
+> """)
+    if CHOICE.upper().strip() in ('Y', "YES"):
+        return True
+    else:
+        return False
+
+
 ### PROCESSING FUNCTIONS ###
 def getRawData(fileName):
     import csv
@@ -218,12 +232,15 @@ def compileSuperheros(allData):
 if __name__ == "__main__":
     # ----- MAIN PROGRAM CODE ----- #
     allSuperheroData, headers = getRawData('comicBookCharData_mixed.csv')
-    # print(headers)
     allSuperheroIDs, allLowercaseSuperheroNames = compileSuperheros(allSuperheroData)
-    playAgain = True
+    PLAY_AGAIN = True
+    FIRST_RUN = True
 
-    while playAgain:
-        # --- input --- #
+    while PLAY_AGAIN:
+        if not FIRST_RUN:
+            # --- input --- #
+            PLAY_AGAIN = rerun()
+        FIRST_RUN = False
         CHOICE = menu()
         if CHOICE == 1:
             SUPERHERO_ID = getSuperheroID()
