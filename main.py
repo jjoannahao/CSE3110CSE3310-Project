@@ -216,7 +216,7 @@ def compileSuperheros(allData):
 if __name__ == "__main__":
     # ----- MAIN PROGRAM CODE ----- #
     allSuperheroData, headers = getRawData('comicBookCharData_mixed.csv')
-    print(headers)
+    # print(headers)
     allSuperheroIDs, allLowercaseSuperheroNames = compileSuperheros(allSuperheroData)
     playAgain = True
 
