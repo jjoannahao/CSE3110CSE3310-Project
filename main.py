@@ -68,13 +68,12 @@ def searchID(INDEX, VALUE):
     :return: int
     """
     global allSuperheroData
-    if INDEX > len(allSuperheroData)-1:
-        return -1
-    elif allSuperheroData[INDEX] == VALUE:
+    if allSuperheroData[INDEX][0] == VALUE:
         return INDEX
     else:
         return searchID(INDEX + 1, VALUE)
-
+    # if INDEX > len(allSuperheroData)-1:
+    #     return -1
 
 
 def iterativeSearchID(ID):
@@ -180,6 +179,7 @@ if __name__ == "__main__":
         # --- processing --- #
         cleanRawData(allSuperheroData)
         sortIDs(allSuperheroData, 0, len(allSuperheroIDs)-1)
+        print(f"max: {allSuperheroData[-1][0]}")
         SUPERHERO_IDX = searchID(0, superheroID)
         if SUPERHERO_IDX == -1:
             continue
