@@ -5,6 +5,53 @@ date: 2023-10-12
 """
 
 
+### INPUT FUNCTIONS ###
+def menu() -> int:
+    """
+    print start message and get superhero ID to retrieve
+    :return: int
+    """
+    print("Welcome to the Superhero Search and Sort!")
+    choice = input("""
+Please choose how you would like to search superheros:
+1. Superhero ID
+2. Superhero Name
+> """)
+    if choice.isdigit() and 1 <= int(choice) <= 2:
+        return int(choice)
+    else:
+        print("Please enter a number between 1 and 2!")
+        return menu()
+
+
+def getSuperheroID():
+    """
+    Get superhero ID to search from user
+    :return:
+    """
+    superheroID = input("What is the Superhero ID? ")
+    superheroID = reformatID(superheroID)  # reformat some IDs
+    if checkID(superheroID):
+        return superheroID.strip()
+    else:
+        print("Entry is invalid!\n")
+        return getSuperheroID()
+
+
+def getSuperheroName():
+    """
+    get superhero name to search from user
+    :return:
+    """
+    superheroName = input("What is the Superhero Name? ")
+    if checkName(superheroName.lower().strip()):
+        return superheroName.strip()
+    else:
+        print("Entry invalid!")
+        return getSuperheroName()
+
+
+### PROCESSING FUNCTIONS
 def getRawData(fileName):
     import csv
     tempLi = []
@@ -69,7 +116,10 @@ def searchID(INDEX, VALUE):
     """
     global allSuperheroData
     if allSuperheroData[INDEX][0] == VALUE:
+        print(f"{allSuperheroData[INDEX][0]} and {VALUE} compared")
         return INDEX
+    elif INDEX > len(allSuperheroData) - 1:
+        return -1
     else:
         return searchID(INDEX + 1, VALUE)
 
@@ -130,51 +180,6 @@ def retrieveSuperheroInfo(index):
     """
     global allSuperheroData
     return allSuperheroData[index]
-
-
-def menu() -> int:
-    """
-    print start message and get superhero ID to retrieve
-    :return: int
-    """
-    print("Welcome to the Superhero Search and Sort!")
-    choice = input("""
-Please choose how you would like to search superheros:
-1. Superhero ID
-2. Superhero Name
-> """)
-    if choice.isdigit() and 1 <= int(choice) <= 2:
-        return int(choice)
-    else:
-        print("Please enter a number between 1 and 2!")
-        return menu()
-
-
-def getSuperheroID():
-    """
-    Get superhero ID to search from user
-    :return:
-    """
-    superheroID = input("What is the Superhero ID? ")
-    superheroID = reformatID(superheroID)  # reformat some IDs
-    if checkID(superheroID):
-        return superheroID
-    else:
-        print("Entry is invalid!\n")
-        return menu()
-
-
-def getSuperheroName():
-    """
-    get superhero name to search from user
-    :return:
-    """
-    superheroName = input("What is the Superhero Name? ")
-    if checkName(superheroName.lower().strip()):
-        return superheroName.strip()
-    else:
-        print("Entry invalid!")
-        return getSuperheroName()
 
 
 def checkID(ID):
@@ -238,27 +243,24 @@ def compileSuperheros(allData):
 if __name__ == "__main__":
     # ----- MAIN PROGRAM CODE ----- #
     allSuperheroData, headers = getRawData('comicBookCharData_mixed.csv')
-    # print(headers)
     allSuperheroIDs, allLowercaseSuperheroNames = compileSuperheros(allSuperheroData)
     playAgain = True
 
     while playAgain:
-        # --- input --- #
-        choice = menu()
-        if choice == 1:
-            superheroID = getSuperheroID()
+        CHOICE = menu()  # input
+        if CHOICE == 1:
+            # --- input --- #
+            SUPERHERO_ID = getSuperheroID()
         else:
-            superheroName = getSuperheroName()
-
+            SUPERHERO_NAME = getSuperheroName()
         # --- processing --- #
         cleanRawData(allSuperheroData)
-
-        if choice == 1:  # user searching by hero ID
-            sortIDs(allSuperheroData, 0, len(allSuperheroIDs)-1)
-            SUPERHERO_IDX = searchID(0, superheroID)
-        else:  # user searching by hero name
-            sortNames(allSuperheroData, 0, len(allSuperheroIDs)-1)
-            SUPERHERO_IDX = searchName(0, superheroName)
+        if CHOICE == 1:
+            sortIDs(allSuperheroData, 0, len(allSuperheroIDs) - 1)
+            SUPERHERO_IDX = searchID(0, SUPERHERO_ID)
+        else:
+            sortNames(allSuperheroData, 0, len(allSuperheroIDs) - 1)
+            SUPERHERO_IDX = searchName(0, SUPERHERO_NAME)
 
         if SUPERHERO_IDX == -1:  # if superhero doesn't exist
             continue
