@@ -64,6 +64,42 @@ def searchID(ID):
     return -1
 
 
+def sortNames(allData):
+    """
+    sort data lexicographically by superhero names
+    :param allData: unsorted list - string
+    :return: None
+    """
+    for i in range(len(allData) - 1):  # stop at 2nd last val  # i = idx of value to be sorted/placed
+        MIN_IDX = i
+        for j in range(i + 1, len(allData)):  # all elems in unsorted section
+            if allData[j][1] < allData[MIN_IDX][1]:
+                MIN_IDX = j
+        if allData[MIN_IDX][1] < allData[i][1]:
+            allData[i], allData[MIN_IDX] = allData[MIN_IDX], allData[i]
+
+
+def searchName(NAME):
+    """
+    search for index of superhero info based on ID using ITERATIVE binary search
+    :param NAME: str
+    :return: int
+    """
+    global allSuperheroData
+    START_IDX = 0
+    END_IDX = len(allSuperheroData) - 1
+
+    while (START_IDX <= END_IDX):  # normal stopping point for binary search
+        MIDPOINT_IDX = (START_IDX + END_IDX) // 2
+        if allSuperheroData[MIDPOINT_IDX][1].lower().strip() == NAME.lower().strip():
+            return MIDPOINT_IDX
+        elif allSuperheroData[MIDPOINT_IDX][1].lower().strip() < NAME.lower().strip():
+            START_IDX = MIDPOINT_IDX + 1
+        else:
+            END_IDX = MIDPOINT_IDX - 1
+    return -1
+
+
 def retrieveSuperheroInfo(index):
     """
     retrieve relevant superhero details using index corresponding to superhero ID
@@ -74,12 +110,29 @@ def retrieveSuperheroInfo(index):
     return allSuperheroData[index]
 
 
-def menu() -> str:
+def menu() -> int:
     """
     print start message and get superhero ID to retrieve
-    :return: string
+    :return: int
     """
     print("Welcome to the Superhero Search and Sort!")
+    choice = input("""
+Please choose how you would like to search superheros:
+1. Superhero ID
+2. Superhero Name
+> """)
+    if choice.isdigit() and 1 <= int(choice) <= 2:
+        return int(choice)
+    else:
+        print("Please enter a number between 1 and 2!")
+        return menu()
+
+
+def getSuperheroID():
+    """
+    Get superhero ID to search from user
+    :return:
+    """
     superheroID = input("What is the Superhero ID? ")
     superheroID = reformatID(superheroID)  # reformat some IDs
     if checkID(superheroID):
@@ -87,6 +140,19 @@ def menu() -> str:
     else:
         print("Entry is invalid!\n")
         return menu()
+
+
+def getSuperheroName():
+    """
+    get superhero name to search from user
+    :return:
+    """
+    superheroName = input("What is the Superhero Name? ")
+    if checkName(superheroName):
+        return superheroName.strip()
+    else:
+        print("Entry invalid!")
+        return getSuperheroName()
 
 
 def checkID(ID):
@@ -98,6 +164,19 @@ def checkID(ID):
     global allSuperheroIDs
     valid = True
     if ID not in allSuperheroIDs:  # check ID existence in data
+        valid = False
+    return valid
+
+
+def checkName(NAME):
+    """
+    check validity of superhero name from user
+    :param NAME: str
+    :return: bool
+    """
+    global allLowercaseSuperheroNames
+    valid = True
+    if NAME not in allLowercaseSuperheroNames:  # check name existence in all data
         valid = False
     return valid
 
@@ -120,36 +199,48 @@ def reformatID(ID):
     return newID  # either 3 numbers (OK) or more than 4 numbers --> won't exist
 
 
-def compileIDs(allData):
+def compileSuperheros(allData):
     """
-    combine all superhero IDs into 1 list
+    combine all superhero IDs into a list and names into another list
     :param allData: 2D list - strings
-    :return: list - string
+    :return: x2 lists - string
     """
     heroIDs = []
+    heroNames = []
     for i in range(len(allData)):
         heroIDs.append(allData[i][0])
-    return heroIDs
+        heroNames.append(allData[i][1].lower().strip())
+    return heroIDs, heroNames
 
 
 if __name__ == "__main__":
     # ----- MAIN PROGRAM CODE ----- #
     allSuperheroData, headers = getRawData('comicBookCharData_mixed.csv')
     print(headers)
-    allSuperheroIDs = compileIDs(allSuperheroData)
+    allSuperheroIDs, allLowercaseSuperheroNames = compileSuperheros(allSuperheroData)
     playAgain = True
 
     while playAgain:
         # --- input --- #
-        superheroID = menu()
+        choice = menu()
+        if choice == 1:
+            superheroID = getSuperheroID()
+        else:
+            superheroName = getSuperheroName()
 
         # --- processing --- #
         cleanRawData(allSuperheroData)
-        sortIDs(allSuperheroData)
-        SUPERHERO_IDX = searchID(superheroID)
-        if SUPERHERO_IDX == -1:
+
+        if choice == 1:  # user searching by hero ID
+            sortIDs(allSuperheroData)
+            SUPERHERO_IDX = searchID(superheroID)
+        else:  # user searching by hero name
+            sortNames(allSuperheroData)
+            SUPERHERO_IDX = searchName(superheroName)
+
+        if SUPERHERO_IDX == -1:  # if superhero doesn't exist
             continue
-        else:
+        else:  # if superhero found
             SUPERHERO_INFO = retrieveSuperheroInfo(SUPERHERO_IDX)
 
             # --- output --- #
